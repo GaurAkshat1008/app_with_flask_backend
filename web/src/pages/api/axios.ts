@@ -74,10 +74,10 @@ export const getUser = async () => {
 
 export const logout = async () => {
   try {
-    let fetching = true
+    let fetching = true;
     const response = await transport.get(`${baseURL}/user/logout`);
     const data = await response.data;
-    fetching = false
+    fetching = false;
     console.log(data);
     return { data, fetching };
   } catch (err) {
@@ -109,7 +109,7 @@ export const getBlogs = async () => {
   }
 };
 
-export const getBLogsById = async (id:number) => {
+export const getBlogsById = async (id: number) => {
   let fetching = true;
   try {
     const response = await transport.get(`${baseURL}/post/get/${id}`);
@@ -120,7 +120,7 @@ export const getBLogsById = async (id:number) => {
   } catch (err) {
     console.log(err);
   }
-}
+};
 
 export const getMyBlogs = async () => {
   let fetching = true;
@@ -133,4 +133,4 @@ export const getMyBlogs = async () => {
   } catch (err) {
     console.log(err);
   }
-}
+};

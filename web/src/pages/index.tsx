@@ -21,6 +21,8 @@ const Index = () => {
   const [user, setUser] = useState([]);
   const [userFetch, setUserFetch] = useState(true);
   const router = useRouter();
+  let body = null;
+
   useEffect(() => {
     getBlogs().then(({ data, fetching }) => {
       setBlogs(data);
@@ -36,9 +38,7 @@ const Index = () => {
       setUserFetch(fetching);
     });
   }, []);
-
   // console.log(loading, blogs);
-  let body = null;
   if (loading) {
     body = (
       <VStack spacing={8} w="70%" mt={10}>
@@ -55,7 +55,7 @@ const Index = () => {
       <>
         {[...blogs].reverse().map((blog) => {
           return (
-            <NextLink href={`/posts/${blog[0]}`}>
+            <NextLink href={`/posts/content/${blog[0]}`}>
               <Box
                 padding="6"
                 boxShadow="xl"
@@ -85,7 +85,7 @@ const Index = () => {
   let myBlog = null;
   if (fetching) {
     myBlog = (
-      <Box padding="6" boxShadow="lg" bg="transparent" w="100%">
+      <Box padding="6" bg="transparent" w="100%">
         <SkeletonText mt="4" noOfLines={3} spacing="4" />
       </Box>
     );
@@ -125,8 +125,8 @@ const Index = () => {
         </Heading>
         <Heading fontSize="md" fontWeight="normal">
           {!fetching && myBlogs.length > 0 ? (
-            myBlogs[myBlogs.length - 1][2]
-          ) : (
+            (myBlogs[myBlogs.length - 1][2]).slice(0, 280)
+          ) :   (
             <SkeletonText noOfLines={1} />
           )}
         </Heading>
@@ -164,7 +164,13 @@ const Index = () => {
             >
               Create Post
             </Button>
-            <Button>View my posts</Button>
+            <Button
+              onClick={() => {
+                router.push("/posts/my");
+              }}
+            >
+              View my posts
+            </Button>
           </Flex>
         </Flex>
         {body}

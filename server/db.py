@@ -22,7 +22,7 @@ class Post(Base):
     __tablename__ = 'posts'
     id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String(50), nullable=False)
-    content = Column(String(500), nullable=False)
+    content = Column(String(1024), nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     author = relationship('User', backref=backref('posts', lazy='dynamic'))
     created = Column(DateTime(timezone=True), server_default=func.now())

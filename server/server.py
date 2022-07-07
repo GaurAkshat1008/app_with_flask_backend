@@ -134,8 +134,12 @@ def getPosts():
 @cross_origin(supports_credentials=True)
 def getPost(post_id):
     try:
-        post = sess.query(Post).filter(Post.id == post_id).first()
-        return jsonify(post.title, post.content, post.author.name, post.created, post.updated)
+        if post_id != -1:
+            post = sess.query(Post).filter(Post.id == post_id).first()
+        if post:
+            return jsonify(post.title, post.content, post.author.name, post.created, post.updated)
+        else:
+            return jsonify('post', 'Post does not exist')
     except Exception as e:
         return str(e)
 
