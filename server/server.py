@@ -125,7 +125,7 @@ def getPosts():
         all_posts = []
         for post in posts:
             all_posts.append((post.id, post.title, post.content,
-                             post.author.name, post.created, post.updated))
+                             post.author.name, post.author.email ,post.created, post.updated))
         return jsonify(all_posts)
     except Exception as e:
         return str(e)
@@ -138,7 +138,8 @@ def getPost(post_id):
         if post_id != -1:
             post = sess.query(Post).filter(Post.id == post_id).first()
         if post:
-            return jsonify(post.title, post.content, post.author.name, post.created, post.updated)
+            return jsonify((post.title, post.content,
+                             post.author.name, post.author.email ,post.created, post.updated))
         else:
             return jsonify('post', 'Post does not exist')
     except Exception as e:
@@ -149,13 +150,16 @@ def getPost(post_id):
 @cross_origin(supports_credentials=True)
 def getMyPosts():
     try:
-        user_id = me()
-        posts = sess.query(Post).filter(Post.user_id == user_id).all()
-        all_posts = []
-        for post in posts:
-            all_posts.append((post.id, post.title, post.content,
-                             post.author.name, post.created, post.updated))
-        return jsonify(all_posts)
+        if isAuthenticated:
+            user_id = me()
+            posts = sess.query(Post).filter(Post.user_id == user_id).all()
+            all_posts = []
+            for post in posts:
+                all_posts.append((post.id, post.title, post.content,
+                                post.author.name, post.created, post.updated))
+            return jsonify(all_posts)
+        else:
+            return jsonify('user', 'Not authenticated')
     except Exception as e:
         return str(e)
 

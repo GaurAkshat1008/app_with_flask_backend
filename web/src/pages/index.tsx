@@ -18,7 +18,7 @@ const Index = () => {
   const [myBlogs, setMyBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [fetching, setFetching] = useState(true);
-  const [user, setUser] = useState([]);
+  const [user, setUser] = useState(['user', 'Not authenticated']);
   const [userFetch, setUserFetch] = useState(true);
   const router = useRouter();
   let body = null;

@@ -8,7 +8,7 @@ import {
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { Layout } from "../../../components/Layout";
-import { deletePost, getBlogsById } from "../../api/axios";
+import { deletePost, getBlogsById, getUser } from "../../api/axios";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 interface postProps {}
 
@@ -16,19 +16,25 @@ const Post: React.FC<postProps> = ({}) => {
   const router = useRouter();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(['user', 'Not authenticated']);
+  const [userFetch, setUserFetch] = useState(true);
   const intId =
     typeof router.query.id === "string" ? parseInt(router.query.id) : -1;
   useEffect(() => {
-    // setTimeout(() => {
     if (intId !== -1) {
       getBlogsById(intId).then(({ data, fetching }) => {
         setBlogs(data);
         setLoading(fetching);
       });
     }
-
-    // }, 1500);
+    getUser().then(({ data, fetching }) => {
+      setUser(data);
+      setUserFetch(fetching);
+    }
+    );
+    console.log('main: ', user[1] === blogs[3])
   }, [intId]);
+  console.log(user, userFetch);
   let body = null;
   if (loading) {
     body = (
@@ -57,7 +63,8 @@ const Post: React.FC<postProps> = ({}) => {
           flexDir="column"
           w={"100%"}
         >
-          <Flex flexDir={"row"} ml="auto">
+          {(!userFetch && user[1] === blogs[3]) ? (
+            <Flex flexDir={"row"} ml="auto">
             <IconButton
               aria-label="delete post"
               icon={<DeleteIcon />}
@@ -81,10 +88,13 @@ const Post: React.FC<postProps> = ({}) => {
               }}
             />
           </Flex>
+          ) : null}
+          
           {/* <DeleteIcon ml={'auto'} fontSize='2xl' color={'red.500'}/> */}
           <Box flex={0.1} ml="auto" mr={"auto"} p={4}>
             {blogs[0]}
           </Box>
+          
           <Flex flex={0.1} justifyContent={"space-between"}>
             <Box>{blogs[2]}</Box>
             <Box>{(blogs[4]) ? (<>Edited on: {blogs[4]}</>) : (<>Created on: {blogs[3]}</>)}</Box>

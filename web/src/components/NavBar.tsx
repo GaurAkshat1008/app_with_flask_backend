@@ -9,7 +9,7 @@ interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
   const router = useRouter();
-  const [user, setUser] = useState<any>([]);
+  const [user, setUser] = useState<any>(['user', 'Not authenticated']);
   const [fetching, setFetching] = useState(false);
   useEffect(() => {
     getUser().then(({ data, fetching }) => {
