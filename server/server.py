@@ -124,7 +124,8 @@ def getPosts():
         posts = sess.query(Post).all()
         all_posts = []
         for post in posts:
-            all_posts.append((post.id, post.title, post.content, post.author.name, post.created, post.updated))
+            all_posts.append((post.id, post.title, post.content,
+                             post.author.name, post.created, post.updated))
         return jsonify(all_posts)
     except Exception as e:
         return str(e)
@@ -152,8 +153,42 @@ def getMyPosts():
         posts = sess.query(Post).filter(Post.user_id == user_id).all()
         all_posts = []
         for post in posts:
-            all_posts.append((post.id, post.title, post.content, post.author.name, post.created, post.updated))
+            all_posts.append((post.id, post.title, post.content,
+                             post.author.name, post.created, post.updated))
         return jsonify(all_posts)
+    except Exception as e:
+        return str(e)
+
+
+@app.route('/api/post/update/<int:post_id>', methods=['POST'])
+@cross_origin(supports_credentials=True)
+def updatePost(post_id):
+    try:
+        title = request.json['title']
+        content = request.json['content']
+        post = sess.query(Post).filter(Post.id == post_id).first()
+        if post:
+            post.title = title
+            post.content = content
+            sess.commit()
+            return jsonify('post', 'Post updated')
+        else:
+            return jsonify('post', 'Post does not exist')
+    except Exception as e:
+        return str(e)
+
+
+@app.route('/api/post/delete/<int:post_id>', methods=['GET'])
+@cross_origin(supports_credentials=True)
+def deletePost(post_id):
+    try:
+        post = sess.query(Post).filter(Post.id == post_id).first()
+        if post:
+            sess.delete(post)
+            sess.commit()
+            return jsonify('post', 'Post deleted')
+        else:
+            return jsonify('post', 'Post does not exist')
     except Exception as e:
         return str(e)
 

@@ -134,3 +134,25 @@ export const getMyBlogs = async () => {
     console.log(err);
   }
 };
+
+export const updatePost = async (id: number, obj: any) => {
+  try {
+    const response = await transport.post(`${baseURL}/post/update/${id}`, obj);
+    const data = await response.data;
+    console.log(data);
+    return { data };
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const deletePost = async (id: number) => {
+  try {
+    const response = await transport.get(`${baseURL}/post/delete/${id}`);
+    const data = await response.data;
+    console.log(data);
+    return { data };
+  } catch (err) {
+    console.log(err);
+  }
+};

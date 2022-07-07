@@ -1,19 +1,26 @@
-import { Box, Flex, SkeletonCircle, SkeletonText } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  SkeletonCircle,
+  SkeletonText,
+  IconButton,
+} from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { Layout } from "../../../components/Layout";
-import { getBlogsById } from "../../api/axios";
-
+import { deletePost, getBlogsById } from "../../api/axios";
+import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 interface postProps {}
 
 const Post: React.FC<postProps> = ({}) => {
   const router = useRouter();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const intId = typeof router.query.id === 'string' ? parseInt(router.query.id) : -1;
+  const intId =
+    typeof router.query.id === "string" ? parseInt(router.query.id) : -1;
   useEffect(() => {
     // setTimeout(() => {
-    if(intId !== -1){
+    if (intId !== -1) {
       getBlogsById(intId).then(({ data, fetching }) => {
         setBlogs(data);
         setLoading(fetching);
@@ -24,7 +31,8 @@ const Post: React.FC<postProps> = ({}) => {
   }, [intId]);
   let body = null;
   if (loading) {
-    body = (<Flex
+    body = (
+      <Flex
         boxShadow={"dark-lg"}
         bg={"blackAlpha.300"}
         p={4}
@@ -33,31 +41,59 @@ const Post: React.FC<postProps> = ({}) => {
         w={"100%"}
       >
         <SkeletonCircle size="10" />
-        <SkeletonText mt="4" noOfLines={4} spacing="4"/>
-        <SkeletonText mt="4" noOfLines={4} spacing="4"/>
-        <SkeletonText mt="4" noOfLines={4} spacing="4"/>
-      </Flex>)
+        <SkeletonText mt="4" noOfLines={4} spacing="4" />
+        <SkeletonText mt="4" noOfLines={4} spacing="4" />
+        <SkeletonText mt="4" noOfLines={4} spacing="4" />
+      </Flex>
+    );
   } else {
     body = (
-      <Flex
-        boxShadow={"dark-lg"}
-        bg={"blackAlpha.300"}
-        p={4}
-        h={"70vh"}
-        flexDir="column"
-        w={"100%"}
-      >
-        <Box flex={0.1} ml="auto" mr={"auto"} p={4}>
-          {blogs[0]}
-        </Box>
-        <Flex flex={0.1} justifyContent={"space-between"}>
-          <Box>{blogs[2]}</Box>
-          <Box>{blogs[3]}</Box>
+      <>
+        <Flex
+          boxShadow={"dark-lg"}
+          bg={"blackAlpha.300"}
+          p={4}
+          h={"80vh"}
+          flexDir="column"
+          w={"100%"}
+        >
+          <Flex flexDir={"row"} ml="auto">
+            <IconButton
+              aria-label="delete post"
+              icon={<DeleteIcon />}
+              fontSize="2xl"
+              color={"red.500"}
+              mr={4}
+              onClick={() => {
+                // console.log("delete");
+                deletePost(intId).then(() => {
+                  router.push("/");
+                });
+              }}
+            />
+            <IconButton
+              aria-label="update post"
+              icon={<EditIcon />}
+              fontSize="2xl"
+              color={"blue.500"}
+              onClick={() => {
+                router.push(`/posts/update/${intId}`);
+              }}
+            />
+          </Flex>
+          {/* <DeleteIcon ml={'auto'} fontSize='2xl' color={'red.500'}/> */}
+          <Box flex={0.1} ml="auto" mr={"auto"} p={4}>
+            {blogs[0]}
+          </Box>
+          <Flex flex={0.1} justifyContent={"space-between"}>
+            <Box>{blogs[2]}</Box>
+            <Box>{(blogs[4]) ? (<>Edited on: {blogs[4]}</>) : (<>Created on: {blogs[3]}</>)}</Box>
+          </Flex>
+          <Box flex={0.8} p={4} border="1px solid white">
+            {blogs[1]}
+          </Box>
         </Flex>
-        <Box flex={0.8} p={4} border="1px solid white">
-          {blogs[1]}
-        </Box>
-      </Flex>
+      </>
     );
   }
   // console.log(blogs);
